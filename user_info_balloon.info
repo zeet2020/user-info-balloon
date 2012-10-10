@@ -1,0 +1,6 @@
+
+name = user info balloon
+description = "module display the user profile information in balloon"
+package = "profile"
+core = 7.x
+files[] = user_info_module.module 

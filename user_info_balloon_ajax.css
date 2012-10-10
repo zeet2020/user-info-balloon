@@ -1,0 +1,49 @@
+ #userInfoPreview
+{
+    position:absolute;
+    top:0px;
+    left:0px;
+    display:none;
+    z-index: 20000;
+}
+ 
+.popup-user-picture{
+float:left;
+padding-right:10px;
+ 
+}
+ 
+ 
+ 
+.userInfoPreview {
+  pointer-events: none;
+  display: inline-block;
+  position: absolute;
+  padding: 10px 20px;
+  color: black;
+  border-radius: 5px;
+  margin-top: 20px;
+ 
+  font: bold 10px "Helvetica Neue", Sans-Serif;
+  font-stretch: condensed;
+  text-decoration: none;  
+  box-shadow: 0 0 7px black;
+  margin-top: 5px;
+  -webkit-transition: all 0.2s ease;
+  -moz-transition:    all 0.2s ease;
+  -ms-transition:     all 0.2s ease;
+  -o-transition:      all 0.2s ease;
+  background: white;
+  border: 2px solid black;
+ 
+}
+ 
+ 
+.userInfoPreviewPopup
+{
+    background-color: #FFF;
+        text-align: left;
+     
+    min-width: 250px;
+    min-height: 50px;
+}

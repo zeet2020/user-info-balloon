@@ -1,0 +1,121 @@
+<?php
+/*
+*
+*  hook_menu implementation
+*/
+function user_info_balloon_menu(){
+    $items=array();
+ 
+        $items['user/%user/infoballoon']=array(
+        'title'=>'its ajax page',
+        'access callback' => 'user_access',
+        'access arguments' => array('allow the access'),
+        'page arguments' =>array(1),
+        'page callback' => 'user_info_balloon_json_page',
+        );
+       
+        $items['admin/config/user_info_balloon']=array(
+                'title'=> 'user info balloon',
+                'description' => 'adjust option',
+                'position' => 'right',
+                'weight' => -5,
+                'page callback' => 'system_admin_menu_block_page',
+                'access arguments' => array('administer site configuration'),
+                'file' => 'system.admin.inc',
+                'file path' => drupal_get_path('module','system'),
+        );
+ 
+        $items['admin/config/user_info_balloon/settings']=array(
+        'title' => 'User info balloon',
+        'description' => 'change what should be show in the balloon',
+        'page callback' => 'drupal_get_form',
+        'page arguments'=> array('user_info_balloon_admin_settings'),
+        'access arguments' => array('administer site configuration'),
+        );
+       
+        return $items;
+}
+ 
+/*
+*
+* system configuration page
+*
+*/
+ 
+function user_info_balloon_admin_settings(){
+   $options=array('picture'=>'show picture','created'=>'show member since','mail'=>'show users email address');
+   $form['user_info_balloon']=array(
+                '#type' => 'checkboxes',
+                '#title' => t('select which options should be displayed'),
+                '#options' => $options,
+                '#default_value' => variable_get('user_info_balloon'),
+      );
+        //$form['#submit'][] = 'user_info_balloon_admin_settings_submit';
+        return system_settings_form($form);
+ 
+}
+ 
+ 
+ 
+/*
+* hook_permission implementation
+*  
+*/
+function user_info_balloon_permission(){
+return array(
+        'allow the access' => array(
+                'title' => t('Allow to popup balloon'),
+                'description' => t('grant the permission to access the popup for the user')
+                ),
+        );
+}
+ 
+/*
+*
+*  hook_boot implemenation
+*/
+function        user_info_balloon_init(){
+        if(user_access('allow the access')){
+drupal_add_js(drupal_get_path('module','user_info_balloon')."/user_info_balloon_ajax.js");
+drupal_add_css(drupal_get_path('module','user_info_balloon')."/user_info_balloon_ajax.css");
+}
+ 
+}
+ 
+ 
+/*
+* page to generate the user profile information
+*
+*/
+ 
+function user_info_balloon_json_page($uid){
+        if(is_object($uid)){
+        $account=$uid;
+        }else{
+        $account=user_load($uid);
+        }
+        //print_r($account);
+       
+               
+        //$output= $account;
+        $val=variable_get('user_info_balloon',0);
+        $build_info=array();
+        $build_info['username'] = $account->name;
+        if($val['picture']){
+       
+        $build_info['picture'] = file_create_url($account->picture->uri);
+          if(!$build_info['picture']){
+             $build_info['picture'] = 'default';
+          }
+        }
+        if($val['created']){
+        $build_info['created'] = format_date($account->created,'medium');
+        }
+        if($val['mail']){
+        $build_info['mail'] = $account->mail;
+        }
+        $output=(object)$build_info;
+       
+        return drupal_json_output($output);
+}
+ 
